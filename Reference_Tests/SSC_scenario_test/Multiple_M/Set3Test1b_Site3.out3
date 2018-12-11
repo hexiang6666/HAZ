@@ -1,0 +1,20 @@
+ 45.2 Haz45.2 Out3 file - mean hazard curves
+       1       0          Number of faults, fault cases
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+ SITE 1 COORDINATES:   -64.927   -0.384
+    1  nAtten
+  Attenuation:     1      0.0000
+    1  nAmp
+ AMP:                                     pSeg al_Wt  MinRrup    1.000000
+  01_Set3Test1b                          1.000 1.000     2.8   0.3435E-03
+  Wt_Total_Events/yr                     0.000 0.000     0.0   0.3435E-03
+  Poisson_Prob:                          0.000 0.000     0.0   0.3434E-03
+  M_bar                                  0.000 0.000     0.0   0.683E+01
+  D_bar                                  0.000 0.000     0.0   0.286E+01
+  Eps_bar                                0.000 0.000     0.0   0.983E+00
+
+------------------
+

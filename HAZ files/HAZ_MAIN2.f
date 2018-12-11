@@ -112,6 +112,15 @@ c      Open Output7 file which will contain deaggregations for each source.
        read (13,'( a80)',err=2107) file1
        open (29,file=file1,status='unknown')
        write (29, *) '45.2 Haz45.2 Out7 file - deaggregation by source'
+
+
+c     Added by Hexiang, for time domain instrusive seismic risk analysis, Nov 2018 
+c     Open output8 file which will contain rate information for different scenarios 
+       read (13,'( a80)',err=2107) file1
+       open (30,file=file1,status='unknown')
+       write (30, *) '45.2 Haz45.2 Out8 file - SSC scenario info'
+       write (30, *) 'M distJB distRup disthypo ZTOR scenario_rate'
+
        
 c      Initialize Haz Arrays to zero
        call InitHaz ( Haz )
@@ -362,7 +371,8 @@ c               Temp: set probability of syn rupture to unity
 c               Later, this will be an input
                 probSyn = 1.
 
-c               Loop over synchronous ruptures (aleatory)          
+c               Loop over synchronous ruptures (aleatory) 
+                ! print *, 'nSyn_Case::', nSyn_Case(iFlt) 
                 do 549 isyn=1,nSyn_Case(iFlt)
                  if (synchron(iFlt) .gt. 0 .and. rup1_flag .eq. 1) then
                   call meanInten ( synDistRup(iFlt,isyn), syndistJB(iFlt,isyn), 
@@ -537,6 +547,66 @@ c                    Compute Marginal Rate of Occurance
                        mHaz = rateS7(iFlt,iMag) * prock * p1 * probAct(iFlt)
                      endif
 
+
+c                    scenario rate output by Hexiang, Note::scenario rate considering the epistemic uncertainty of parameters like fault width and max. magnitude. 
+c                    scenario Haz = scenario rate * ground motion exceeding probability  
+                    if (SSC_count .eq. 0) then
+
+                      M_pre = mag
+                      distJB_pre = distJB
+                      distRup_pre = distRup
+                      ! distSeismo_pre = distSeismo
+                      disthypo_pre = disthypo
+                      ! Rx_pre = Rx
+                      ! Ry_pre = Ry 
+                      ! Ry0_pre = Ry0
+                      ZTOR_pre = ZTOR
+
+                      ! prock_pre = prock
+
+                      scenario_rate = wt*p1*probAct(iFlt)*rate(iParam,iFltWidth)
+
+                      SSC_count = SSC_count +1; 
+
+                    elseif (abs(M_pre-mag)<0.1 .AND. abs(distJB_pre   !! means different scenarios are encountered with defined tolerance  
+     1                - distJB) < 0.2 .AND. abs(distRup_pre-distRup) < 0.2
+     2              .AND. abs(disthypo_pre/distRup_pre-disthypo/distRup)<1 
+     2               .AND. abs(ZTOR_pre-ZTOR)<0.2) then  
+
+                      scenario_rate = scenario_rate + wt*p1*probAct(iFlt)*rate(iParam,iFltWidth); 
+
+                      SSC_count = SSC_count +1
+
+                      ! prock_pre = prock
+                    
+                    else 
+
+                      !call WriteSSCinfo(mag, distJB, distRup, distSeismo, disthypo, Rx, Ry, Ry0, scenario_rate)
+
+                      if (abs(scenario_rate) .gt. 1e-9) call WriteSSCinfo( M_pre, 
+     1                distJB_pre, distRup_pre, disthypo_pre, ZTOR_pre, scenario_rate)  !! write out last scenario metrics 
+
+                      ! print *, 'scenario_rate', scenario_rate 
+                      
+                      ! print *, 'Exceeding probability', prock_pre 
+
+                      scenario_rate = wt*p1*probAct(iFlt)*rate(iParam,iFltWidth);  !! new scenario rate
+
+                      SSC_count = SSC_count + 1
+
+                      M_pre = mag
+                      
+                      distJB_pre = distJB
+                      
+                      distRup_pre = distRup
+                      ! distSeismo_pre = distSeismo
+                      disthypo_pre = disthypo
+                      ! Rx_pre = Rx
+                      ! Ry_pre = Ry 
+                      ! Ry0_pre = Ry0
+                      ZTOR_pre = ZTOR
+
+                    endif
 c                    Add marginal rate of exceed to total
                      Haz(jInten,iProb,iFlt) = Haz(jInten,iProb,iFlt) + mHaz*wt* gm_wt(iProb,jType,iAtten)
                      
@@ -659,6 +729,12 @@ c      Write out the deagrregated hazard
  2000 continue
       close (77)
 
+        ! print *, 'Exceeding probability', prock
+
+                          if (abs(scenario_rate) .gt. 1e-9) call WriteSSCinfo( M_pre, 
+     1                distJB_pre, distRup_pre, disthypo_pre, ZTOR_pre, scenario_rate)
+
+      close (30)
       write (*,'( 2x,''Normal termination'')')
       stop
       

@@ -308,7 +308,7 @@ def read_out4(fname):
 
 def test_read_out4():
     """Test reading of a HAZ out4 formatted text file."""
-    site = read_out4('../PEER Verification Tests/' +
+    site = read_out4('../PEER_Verification_Tests/' +
                      'Set2/S2Test1/Output/Set2Test1_Site1.out4')
 
     np.testing.assert_allclose(site['lat'], 0.000)
@@ -357,3 +357,5 @@ def test_read_out4():
         for key, expected in zip(keys, test_bin):
             actual = site['bins'][idx][key]
             np.testing.assert_allclose(actual, expected)
+
+test_read_out4()

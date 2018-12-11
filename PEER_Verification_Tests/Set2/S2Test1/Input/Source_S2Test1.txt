@@ -223,5 +223,3 @@ FaultC
 1             	 	Number of fault mech
 0.0             	  fault mech
 1.0            		  wts for fault mech
-   
-

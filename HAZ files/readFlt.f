@@ -473,6 +473,7 @@ c        Read seismogenic thickness
          
 c        Read depth pdf
          read (10,*,err=3045) iDepthModel(iFlt), (depthParam(iflt,k),k=1,3)     
+         ! read (10,*,err=3045) iDepthModel(iFlt), (depthParam(iFlt,k),k=1,3)    !! [By Hexiang, Is this a bug?? Nov, 2019] 
 
 c        Read reference mags for each fault thickness
          iThickDip = 1
@@ -1204,6 +1205,7 @@ c        Read seismogenic thickness
          
 c        Read depth pdf
          read (10,*,err=3045) iDepthModel(iFlt), (depthParam(iflt,k),k=1,3)     
+         ! read (10,*,err=3045) iDepthModel(iFlt), (depthParam(iFlt,k),k=1,3)    !! [By Hexiang, Is this a bug?? Nov, 2019]  
 
 c        Read Mag method (scaling relations or set values)
          read (10,*,err=3046) iOverRideMag

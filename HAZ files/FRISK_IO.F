@@ -916,3 +916,23 @@ c        Write MBar, RrupBar, Rjbbar, Rxbar and EpsBar Results
       end
       
 c  -------------------------------------------------------------------
+
+      ! subroutine WriteSSCinfo(mag, distJB, distRup, distSeismo, disthypo, Rx, Ry, Ry0, scenario_rate)
+        subroutine WriteSSCinfo(M_pre, distJB_pre, distRup_pre, 
+     1  disthypo_pre, ZTOR_pre, scenario_rate)
+
+
+      implicit none
+      include 'pfrisk.h'
+
+      integer nwr
+      real M_pre, distJB_pre, distRup_pre, disthypo_pre, ZTOR_pre 
+      real*8 scenario_rate     
+    
+      nwr = 30 
+
+      write (nwr,'(5f10.5,1e10.3)') M_pre, distJB_pre, distRup_pre, disthypo_pre, ZTOR_pre, scenario_rate
+
+      return
+
+      end    
